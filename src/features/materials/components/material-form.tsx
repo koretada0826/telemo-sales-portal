@@ -45,7 +45,7 @@ export function MaterialForm({ materialId, defaultValues }: Props) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <Card className="p-6">
+      <Card className="p-4 sm:p-6">
         <div className="space-y-5">
           <div className="rounded-btn border border-warning/40 bg-warning/10 p-3 text-xs text-warning">
             ⚠ 現状はファイル情報のメタデータ管理のみ。実ファイルのアップロードはフェーズ5でSupabase Storage連携予定です。

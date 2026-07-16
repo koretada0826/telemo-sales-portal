@@ -13,7 +13,7 @@ type Props = { script: Script };
 export function ScriptCard({ script }: Props) {
   return (
     <Card className="p-0">
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="flex items-start gap-3">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-mint-soft text-mint-dark">
             <MessageSquareText className="h-4 w-4" />
@@ -41,7 +41,7 @@ export function ScriptCard({ script }: Props) {
           </span>
         </div>
       </div>
-      <div className="flex items-center justify-end border-t border-line bg-mint-softer/40 px-6 py-3">
+      <div className="flex items-center justify-end border-t border-line bg-mint-softer/40 px-4 py-3 sm:px-6">
         <Button asChild variant="outline" size="sm">
           <Link href={`/training/scripts/${script.id}`}>
             詳細を見る

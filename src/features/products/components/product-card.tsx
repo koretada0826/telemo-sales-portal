@@ -10,7 +10,7 @@ import { formatRelative, truncate } from "@/lib/utils/format";
 export function ProductCard({ product }: { product: Product }) {
   return (
     <Card className="p-0">
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="flex items-start gap-3">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-mint-soft text-mint-dark">
             <Package className="h-4 w-4" />
@@ -31,7 +31,7 @@ export function ProductCard({ product }: { product: Product }) {
           </span>
         </div>
       </div>
-      <div className="flex items-center justify-end border-t border-line bg-mint-softer/40 px-6 py-3">
+      <div className="flex items-center justify-end border-t border-line bg-mint-softer/40 px-4 py-3 sm:px-6">
         <Button asChild variant="outline" size="sm">
           <Link href={`/sales/products/${product.id}`}>詳細を見る<ArrowRight className="h-3.5 w-3.5" /></Link>
         </Button>

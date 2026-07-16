@@ -52,7 +52,7 @@ export function ProductForm({ productId, defaultValues }: Props) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <Card className="p-6">
+      <Card className="p-4 sm:p-6">
         <div className="space-y-5">
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-1.5">

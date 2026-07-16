@@ -11,7 +11,7 @@ import { formatDateTime } from "@/lib/utils/format";
 export function MeetingCard({ meeting }: { meeting: MeetingLog }) {
   return (
     <Card className="p-0">
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             <h3 className="text-base font-semibold text-ink sm:text-lg">{meeting.companyName}</h3>
@@ -44,7 +44,7 @@ export function MeetingCard({ meeting }: { meeting: MeetingLog }) {
           )}
         </div>
       </div>
-      <div className="flex items-center justify-end border-t border-line bg-mint-softer/40 px-6 py-3">
+      <div className="flex items-center justify-end border-t border-line bg-mint-softer/40 px-4 py-3 sm:px-6">
         <Button asChild variant="outline" size="sm">
           <Link href={`/meetings/${meeting.id}`}>詳細を見る<ArrowRight className="h-3.5 w-3.5" /></Link>
         </Button>

@@ -23,7 +23,7 @@ export function FaqCard({ faq }: Props) {
 
   return (
     <Card className="p-0">
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {/* Q（質問） */}
         <div className="flex items-start gap-3">
           <span
@@ -104,7 +104,7 @@ export function FaqCard({ faq }: Props) {
       </div>
 
       {/* 右下の操作エリア */}
-      <div className="flex items-center justify-end gap-2 border-t border-line bg-mint-softer/40 px-6 py-3">
+      <div className="flex items-center justify-end gap-2 border-t border-line bg-mint-softer/40 px-4 py-3 sm:px-6">
         {isUnanswered && (
           <AnswerFaqButton faqId={faq.id} question={faq.question} variant="primary" />
         )}

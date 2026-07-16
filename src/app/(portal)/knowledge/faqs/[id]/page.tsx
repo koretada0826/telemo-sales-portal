@@ -121,7 +121,7 @@ export default async function FaqDetailPage({ params }: Props) {
         {/* ===== 左：本体 ===== */}
         <div className="space-y-6">
           {/* 質問 */}
-          <Card className="p-6">
+          <Card className="p-4 sm:p-6">
             <div className="flex items-start gap-3">
               <span
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-mint-soft text-sm font-bold text-mint-dark"
@@ -148,7 +148,7 @@ export default async function FaqDetailPage({ params }: Props) {
           </Card>
 
           {/* 回答（未回答なら回答呼びかけ + ボタン） */}
-          <Card className="p-6">
+          <Card className="p-4 sm:p-6">
             <div className="flex items-start gap-3">
               <span
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sidebar text-sm font-bold text-white"
@@ -180,7 +180,7 @@ export default async function FaqDetailPage({ params }: Props) {
 
           {/* タグ */}
           {tags.length > 0 && (
-            <Card className="p-6">
+            <Card className="p-4 sm:p-6">
               <p className="mb-3 text-sm font-semibold text-ink-soft">タグ</p>
               <div className="flex flex-wrap gap-2">
                 {tags.map((t) => (
@@ -194,7 +194,7 @@ export default async function FaqDetailPage({ params }: Props) {
 
           {/* 関連FAQ */}
           {relatedFaqs.length > 0 && (
-            <Card className="p-6">
+            <Card className="p-4 sm:p-6">
               <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-ink-soft">
                 <Link2 className="h-4 w-4" />
                 関連FAQ

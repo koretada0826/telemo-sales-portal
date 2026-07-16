@@ -28,14 +28,15 @@ export function HeaderSearch() {
 
   return (
     <form onSubmit={submit} className="relative w-full max-w-2xl">
-      <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-soft" />
+      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-soft sm:left-4" />
       <input
         type="search"
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        placeholder="ポータル内を横断検索（Enterで実行）"
+        // モバイル：短いplaceholder、デスクトップ：説明付き
+        placeholder="検索"
         className={cn(
-          "h-11 w-full rounded-full border border-line bg-bg pl-11 pr-4 text-sm",
+          "h-9 w-full rounded-full border border-line bg-bg pl-9 pr-3 text-sm sm:h-11 sm:pl-11 sm:pr-4",
           "placeholder:text-ink-soft",
           "focus:border-mint focus:bg-white",
         )}

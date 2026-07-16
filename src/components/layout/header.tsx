@@ -19,7 +19,8 @@ export function Header({ user, extraByGroup }: Props) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-30 flex h-[72px] items-center gap-3 border-b border-line bg-white px-4 lg:px-8",
+        "sticky top-0 z-30 flex h-[64px] items-center gap-2 border-b border-line bg-white px-3",
+        "sm:h-[72px] sm:gap-3 sm:px-4 lg:px-8",
       )}
     >
       <MobileDrawer extraByGroup={extraByGroup} userRole={user.role} />

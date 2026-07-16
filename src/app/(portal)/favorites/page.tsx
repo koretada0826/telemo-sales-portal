@@ -91,7 +91,7 @@ export default async function FavoritesPage() {
             const Icon = meta.icon;
             return (
               <Card key={fav.id} className="p-0">
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                   <div className="flex items-start gap-3">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-btn bg-mint-softer text-mint-dark">
                       <Icon className="h-5 w-5" />
@@ -111,7 +111,7 @@ export default async function FavoritesPage() {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center justify-end border-t border-line bg-mint-softer/40 px-6 py-3">
+                <div className="flex items-center justify-end border-t border-line bg-mint-softer/40 px-4 py-3 sm:px-6">
                   <Button asChild variant="outline" size="sm">
                     <Link href={`${meta.hrefPrefix}${fav.contentId}`}>詳細を見る</Link>
                   </Button>
