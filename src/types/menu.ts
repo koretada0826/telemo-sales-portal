@@ -14,4 +14,6 @@ export type MenuGroup = {
   label: string;
   icon: LucideIcon;
   items: MenuItem[];
+  /** true のときは admin ロールにだけ表示 */
+  adminOnly?: boolean;
 };

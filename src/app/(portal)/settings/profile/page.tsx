@@ -5,8 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/current-user";
+import { requireAdmin } from "@/lib/auth/require-admin";
 
 export default async function ProfileSettingsPage() {
+  await requireAdmin();
   const user = await getCurrentUser();
 
   return (

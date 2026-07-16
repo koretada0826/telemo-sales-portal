@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { ArrowRight, Eye, Heart, User, HelpCircle } from "lucide-react";
+import { ArrowRight, Eye, Heart, HelpCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Attribution } from "@/components/ui/attribution";
 import type { Faq } from "@/types/faq";
 import { getFaqCategory } from "@/data/mock/categories";
 import { getTags } from "@/data/mock/tags";
-import { getMockUser } from "@/data/mock/users";
 import { formatRelative, formatNumber, truncate } from "@/lib/utils/format";
 import { AnswerFaqButton } from "./answer-faq-button";
 
@@ -14,15 +14,11 @@ type Props = { faq: Faq };
 
 /**
  * FAQ1件を表示するカード。
- * 未回答（answer が空）の場合：
- *  - 上部に「未回答」バッジ
- *  - 回答部分は「まだ回答がありません」表示
- *  - 右下に「答える」ボタン
+ * 質問者・回答者を明示（未回答なら回答者は非表示）
  */
 export function FaqCard({ faq }: Props) {
   const category = getFaqCategory(faq.categoryId);
   const tags = getTags(faq.tagIds);
-  const author = getMockUser(faq.authorId);
   const isUnanswered = faq.answer.trim().length === 0;
 
   return (
@@ -86,19 +82,20 @@ export function FaqCard({ faq }: Props) {
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 text-xs text-ink-soft">
-            {author && (
-              <span className="inline-flex items-center gap-1">
-                <User className="h-3.5 w-3.5" />
-                {author.name}
-              </span>
-            )}
-            <span>更新 {formatRelative(faq.updatedAt)}</span>
-            <span className="inline-flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-4">
+            {/* 質問者 + 回答者（Q&Aモード） */}
+            <Attribution
+              authorId={faq.authorId}
+              updaterId={faq.updaterId}
+              isQA
+              unanswered={isUnanswered}
+            />
+            <span className="text-xs text-ink-soft">更新 {formatRelative(faq.updatedAt)}</span>
+            <span className="inline-flex items-center gap-1 text-xs text-ink-soft">
               <Eye className="h-3.5 w-3.5" />
               {formatNumber(faq.viewCount)}
             </span>
-            <span className="inline-flex items-center gap-1">
+            <span className="inline-flex items-center gap-1 text-xs text-ink-soft">
               <Heart className="h-3.5 w-3.5" />
               {formatNumber(faq.favoriteCount)}
             </span>
@@ -106,7 +103,7 @@ export function FaqCard({ faq }: Props) {
         </div>
       </div>
 
-      {/* 右下の操作エリア。未回答なら「答える」を優先表示 */}
+      {/* 右下の操作エリア */}
       <div className="flex items-center justify-end gap-2 border-t border-line bg-mint-softer/40 px-6 py-3">
         {isUnanswered && (
           <AnswerFaqButton faqId={faq.id} question={faq.question} variant="primary" />

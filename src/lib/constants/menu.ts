@@ -58,6 +58,7 @@ export const MENU_GROUPS: MenuGroup[] = [
     id: "settings",
     label: "設定",
     icon: Settings,
+    adminOnly: true, // ★admin ロールのみ表示
     items: [
       { href: "/settings/users", label: "ユーザー管理", icon: Users },
       { href: "/settings/categories", label: "カテゴリー管理", icon: Tags },

@@ -4,14 +4,9 @@ import { loadMap, saveMap } from "./persist";
 
 const FILE = "favorites.json";
 
-// シード：dummy-admin-001 に3件お気に入り
+// シードは空。ユーザーがお気に入り登録すると蓄積される。
 function getSeeds(): Favorite[] {
-  const now = new Date().toISOString();
-  return [
-    { id: "fav-seed-0", userId: "dummy-admin-001", contentType: "faq", contentId: "faq-001", createdAt: now },
-    { id: "fav-seed-1", userId: "dummy-admin-001", contentType: "script", contentId: "sc-001", createdAt: now },
-    { id: "fav-seed-2", userId: "dummy-admin-001", contentType: "product", contentId: "prd-001", createdAt: now },
-  ];
+  return [];
 }
 
 const load = () => loadMap<Favorite>(FILE, getSeeds);

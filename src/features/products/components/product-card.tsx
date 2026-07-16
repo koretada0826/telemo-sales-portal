@@ -1,14 +1,13 @@
 import Link from "next/link";
-import { ArrowRight, Package, User, Calendar } from "lucide-react";
+import { ArrowRight, Package, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Attribution } from "@/components/ui/attribution";
 import type { Product } from "@/types/product";
-import { getMockUser } from "@/data/mock/users";
 import { formatRelative, truncate } from "@/lib/utils/format";
 
 export function ProductCard({ product }: { product: Product }) {
-  const author = getMockUser(product.updaterId);
   return (
     <Card className="p-0">
       <div className="p-6">
@@ -25,9 +24,11 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="mt-4 flex flex-wrap items-center gap-2">
           {product.targetIndustry && <Badge variant="mint">{product.targetIndustry}</Badge>}
         </div>
-        <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-ink-soft">
-          {author && (<span className="inline-flex items-center gap-1"><User className="h-3.5 w-3.5" />{author.name}</span>)}
-          <span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5" />更新 {formatRelative(product.updatedAt)}</span>
+        <div className="mt-4 flex flex-wrap items-center gap-4">
+          <Attribution authorId={product.authorId} updaterId={product.updaterId} />
+          <span className="inline-flex items-center gap-1 text-xs text-ink-soft">
+            <Calendar className="h-3.5 w-3.5" />更新 {formatRelative(product.updatedAt)}
+          </span>
         </div>
       </div>
       <div className="flex items-center justify-end border-t border-line bg-mint-softer/40 px-6 py-3">

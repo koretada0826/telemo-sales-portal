@@ -1,15 +1,14 @@
 import Link from "next/link";
-import { ArrowRight, FileText, User, Calendar } from "lucide-react";
+import { ArrowRight, FileText, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Attribution } from "@/components/ui/attribution";
 import type { Material } from "@/types/material";
 import { FILE_KIND_LABEL } from "@/types/material";
-import { getMockUser } from "@/data/mock/users";
 import { formatNumber, formatRelative } from "@/lib/utils/format";
 
 export function MaterialCard({ material }: { material: Material }) {
-  const author = getMockUser(material.authorId);
   return (
     <Card className="p-0">
       <div className="p-6">
@@ -27,7 +26,7 @@ export function MaterialCard({ material }: { material: Material }) {
         <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-ink-soft">
           <span>{formatNumber(material.fileSizeKb)} KB</span>
           <span>v{material.version}</span>
-          {author && <span className="inline-flex items-center gap-1"><User className="h-3.5 w-3.5" />{author.name}</span>}
+          <Attribution authorId={material.authorId} updaterId={material.updaterId} />
           <span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5" />更新 {formatRelative(material.updatedAt)}</span>
         </div>
       </div>

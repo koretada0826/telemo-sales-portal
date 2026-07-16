@@ -22,7 +22,7 @@ export function Header({ user, extraByGroup }: Props) {
         "sticky top-0 z-30 flex h-[72px] items-center gap-3 border-b border-line bg-white px-4 lg:px-8",
       )}
     >
-      <MobileDrawer extraByGroup={extraByGroup} />
+      <MobileDrawer extraByGroup={extraByGroup} userRole={user.role} />
       <div className="flex flex-1 justify-center">
         {/* HeaderSearchはuseSearchParamsを使うため、Suspense境界で囲む
             （静的プリレンダリング時のNext.js要件） */}

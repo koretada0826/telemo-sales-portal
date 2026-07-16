@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { listUsers } from "@/lib/auth/user-store";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { formatDate } from "@/lib/utils/format";
 
 // 権限バッジ色
@@ -16,7 +17,7 @@ const ROLE_META: Record<string, { label: string; variant: "success" | "mint" | "
 };
 
 export default async function UsersSettingsPage() {
-  // ★実データ：JSONファイルから取得
+  await requireAdmin(); // ★admin以外はダッシュボードへリダイレクト
   const users = await listUsers();
 
   return (

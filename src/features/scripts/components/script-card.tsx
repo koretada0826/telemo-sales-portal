@@ -1,18 +1,16 @@
 import Link from "next/link";
-import { ArrowRight, MessageSquareText, Calendar, User } from "lucide-react";
+import { ArrowRight, MessageSquareText, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Attribution } from "@/components/ui/attribution";
 import type { Script } from "@/types/script";
 import { SCRIPT_SCENE_LABEL } from "@/types/script";
-import { getMockUser } from "@/data/mock/users";
 import { formatRelative, truncate } from "@/lib/utils/format";
 
 type Props = { script: Script };
 
-/** トークスクリプト一覧のカード */
 export function ScriptCard({ script }: Props) {
-  const author = getMockUser(script.authorId);
   return (
     <Card className="p-0">
       <div className="p-6">
@@ -35,14 +33,9 @@ export function ScriptCard({ script }: Props) {
           {truncate(script.opening || script.productPitch, 120)}
         </p>
 
-        <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-ink-soft">
-          {author && (
-            <span className="inline-flex items-center gap-1">
-              <User className="h-3.5 w-3.5" />
-              {author.name}
-            </span>
-          )}
-          <span className="inline-flex items-center gap-1">
+        <div className="mt-4 flex flex-wrap items-center gap-4">
+          <Attribution authorId={script.authorId} updaterId={script.updaterId} />
+          <span className="inline-flex items-center gap-1 text-xs text-ink-soft">
             <Calendar className="h-3.5 w-3.5" />
             更新 {formatRelative(script.updatedAt)}
           </span>

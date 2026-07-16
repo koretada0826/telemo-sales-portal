@@ -2,6 +2,7 @@ import { Bell } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { requireAdmin } from "@/lib/auth/require-admin";
 
 // 通知チャネルとON/OFFの見本（実制御はフェーズ5以降）
 const CHANNELS = [
@@ -18,7 +19,8 @@ const EVENTS = [
   { key: "reminder-meeting", label: "次回商談予定日が近づいた" },
 ];
 
-export default function NotificationSettingsPage() {
+export default async function NotificationSettingsPage() {
+  await requireAdmin();
   return (
     <>
       <PageHeader

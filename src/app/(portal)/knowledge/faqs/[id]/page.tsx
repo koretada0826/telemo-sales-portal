@@ -222,16 +222,20 @@ export default async function FaqDetailPage({ params }: Props) {
               <CardTitle>投稿情報</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
-              <Row icon={<User className="h-4 w-4" />} label="作成者">
+              <Row icon={<User className="h-4 w-4" />} label="質問者">
                 {author?.name ?? "-"}
               </Row>
-              <Row icon={<User className="h-4 w-4" />} label="更新者">
-                {updater?.name ?? "-"}
+              <Row icon={<User className="h-4 w-4" />} label="回答者">
+                {isUnanswered ? (
+                  <span className="text-warning">未回答</span>
+                ) : (
+                  updater?.name ?? "-"
+                )}
               </Row>
-              <Row icon={<Calendar className="h-4 w-4" />} label="作成日時">
+              <Row icon={<Calendar className="h-4 w-4" />} label="質問日時">
                 {formatDateTime(faq.createdAt)}
               </Row>
-              <Row icon={<Calendar className="h-4 w-4" />} label="更新日時">
+              <Row icon={<Calendar className="h-4 w-4" />} label="最終更新">
                 {formatDateTime(faq.updatedAt)}
               </Row>
               <Row icon={<Shield className="h-4 w-4" />} label="閲覧権限">

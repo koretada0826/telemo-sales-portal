@@ -8,6 +8,8 @@ import type { CustomMenuGroup } from "@/types/custom-menu";
 /**
  * ポータル全体の共通レイアウト。
  * サイドバー・ヘッダーには動的メニュー(extraByGroup)を注入する。
+ * adminOnly メニューグループは role='admin' 以外には見えないよう、
+ * ここでユーザー役割を Sidebar / Header に渡す。
  */
 export default async function PortalLayout({
   children,
@@ -15,7 +17,6 @@ export default async function PortalLayout({
   children: React.ReactNode;
 }) {
   const user = await getCurrentUser();
-  // 権限に応じた動的メニュー取得 → groupで分類
   const visible = await listVisibleCustomMenus(user.role);
   const extraByGroup: Record<string, CustomMenu[]> = { training: [], sales: [], personal: [] };
   for (const m of visible) {
@@ -25,7 +26,7 @@ export default async function PortalLayout({
   return (
     <div className="flex h-dvh w-full">
       <div className="hidden lg:block">
-        <Sidebar extraByGroup={extraByGroup} />
+        <Sidebar extraByGroup={extraByGroup} userRole={user.role} />
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
         <Header user={user} extraByGroup={extraByGroup} />

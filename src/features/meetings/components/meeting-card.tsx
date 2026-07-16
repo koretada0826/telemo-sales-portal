@@ -1,15 +1,14 @@
 import Link from "next/link";
-import { ArrowRight, Calendar, User, Handshake } from "lucide-react";
+import { ArrowRight, Calendar, Handshake } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Attribution } from "@/components/ui/attribution";
 import type { MeetingLog } from "@/types/meeting";
 import { MEETING_STATUS_LABEL, MEETING_STATUS_VARIANT, MEETING_METHOD_LABEL } from "@/types/meeting";
-import { getMockUser } from "@/data/mock/users";
 import { formatDateTime } from "@/lib/utils/format";
 
 export function MeetingCard({ meeting }: { meeting: MeetingLog }) {
-  const owner = getMockUser(meeting.ownerId);
   return (
     <Card className="p-0">
       <div className="p-6">
@@ -30,19 +29,15 @@ export function MeetingCard({ meeting }: { meeting: MeetingLog }) {
 
         <p className="mt-4 text-sm text-ink-soft clamp-2">{meeting.content}</p>
 
-        <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-ink-soft">
-          <span className="inline-flex items-center gap-1">
+        <div className="mt-4 flex flex-wrap items-center gap-4">
+          <span className="inline-flex items-center gap-1 text-xs text-ink-soft">
             <Calendar className="h-3.5 w-3.5" />
             {formatDateTime(meeting.meetingAt)}
           </span>
-          {owner && (
-            <span className="inline-flex items-center gap-1">
-              <User className="h-3.5 w-3.5" />
-              {owner.name}
-            </span>
-          )}
+          {/* 商談担当を「作成」ラベルで表示（Meetingは authorId 相当が ownerId） */}
+          <Attribution authorId={meeting.ownerId} />
           {meeting.hasDecisionMaker && (
-            <span className="inline-flex items-center gap-1 text-mint-dark">
+            <span className="inline-flex items-center gap-1 text-xs text-mint-dark">
               <Handshake className="h-3.5 w-3.5" />
               決裁者同席
             </span>

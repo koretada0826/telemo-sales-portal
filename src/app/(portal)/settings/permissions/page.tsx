@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils/cn";
+import { requireAdmin } from "@/lib/auth/require-admin";
 
 // 権限マトリクスの列（権限）
 const ROLES = [
@@ -34,7 +35,8 @@ const PERMISSIONS: {
   { label: "システム設定", admin: true, manager: false, member: false, viewer: false },
 ];
 
-export default function PermissionsSettingsPage() {
+export default async function PermissionsSettingsPage() {
+  await requireAdmin();
   return (
     <>
       <PageHeader

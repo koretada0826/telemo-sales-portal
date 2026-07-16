@@ -3,8 +3,10 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
+import { requireAdmin } from "@/lib/auth/require-admin";
 
-export default function SystemSettingsPage() {
+export default async function SystemSettingsPage() {
+  await requireAdmin();
   return (
     <>
       <PageHeader

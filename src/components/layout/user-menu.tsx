@@ -58,9 +58,14 @@ export function UserMenu({ user }: { user: CurrentUser }) {
                 </p>
               )}
             </div>
-            <MenuLink href="/settings/profile" icon={<User className="h-4 w-4" />} label="プロフィール" onClose={() => setOpen(false)} />
-            <MenuLink href="/settings/system" icon={<Settings className="h-4 w-4" />} label="アカウント設定" onClose={() => setOpen(false)} />
-            <div className="my-1 h-px bg-line" />
+            {/* 設定リンクは admin のみ */}
+            {user.role === "admin" && (
+              <>
+                <MenuLink href="/settings/profile" icon={<User className="h-4 w-4" />} label="プロフィール" onClose={() => setOpen(false)} />
+                <MenuLink href="/settings/system" icon={<Settings className="h-4 w-4" />} label="アカウント設定" onClose={() => setOpen(false)} />
+                <div className="my-1 h-px bg-line" />
+              </>
+            )}
             <button
               type="button"
               onClick={handleLogout}

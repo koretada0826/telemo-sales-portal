@@ -11,9 +11,10 @@ import type { CustomMenu } from "@/types/custom-menu";
 
 type Props = {
   extraByGroup?: Record<string, CustomMenu[]>;
+  userRole?: "admin" | "manager" | "member" | "viewer";
 };
 
-export function MobileDrawer({ extraByGroup }: Props) {
+export function MobileDrawer({ extraByGroup, userRole }: Props) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -67,7 +68,7 @@ export function MobileDrawer({ extraByGroup }: Props) {
           >
             <X className="h-4 w-4" />
           </button>
-          <Sidebar onNavigate={() => setOpen(false)} extraByGroup={extraByGroup} />
+          <Sidebar onNavigate={() => setOpen(false)} extraByGroup={extraByGroup} userRole={userRole} />
         </div>
       </div>
     </>

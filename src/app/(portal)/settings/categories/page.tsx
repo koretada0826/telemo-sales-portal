@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FAQ_CATEGORIES } from "@/data/mock/categories";
 import { TAGS } from "@/data/mock/tags";
+import { requireAdmin } from "@/lib/auth/require-admin";
 
-export default function CategoriesSettingsPage() {
+export default async function CategoriesSettingsPage() {
+  await requireAdmin();
   return (
     <>
       <PageHeader

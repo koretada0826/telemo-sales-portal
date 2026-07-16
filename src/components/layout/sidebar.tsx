@@ -17,13 +17,19 @@ type Props = {
   onNavigate?: () => void;
   /** 動的メニュー：グループIDごとの追加項目 */
   extraByGroup?: Record<string, CustomMenu[]>;
+  /** 現在のユーザーの権限（adminOnly グループのフィルタに使用） */
+  userRole?: "admin" | "manager" | "member" | "viewer";
 };
 
-export function Sidebar({ onNavigate, extraByGroup = {} }: Props) {
+export function Sidebar({ onNavigate, extraByGroup = {}, userRole }: Props) {
+  // adminOnly なグループは admin 以外には表示しない
+  const visibleGroups = MENU_GROUPS.filter(
+    (g) => !g.adminOnly || userRole === "admin",
+  );
   const pathname = usePathname();
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
-    MENU_GROUPS.reduce(
+    visibleGroups.reduce(
       (acc, g) => ({ ...acc, [g.id]: true }),
       {} as Record<string, boolean>,
     ),
@@ -50,7 +56,7 @@ export function Sidebar({ onNavigate, extraByGroup = {} }: Props) {
 
       {/* --- メニュー本体 --- */}
       <nav className="thin-scroll relative z-10 flex-1 overflow-y-auto px-3 py-4">
-        {MENU_GROUPS.map((group) => {
+        {visibleGroups.map((group) => {
           const GroupIcon = group.icon;
           const isOpen = openGroups[group.id];
           const extras = extraByGroup[group.id] ?? [];

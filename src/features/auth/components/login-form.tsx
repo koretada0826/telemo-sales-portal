@@ -50,7 +50,7 @@ export function LoginForm() {
             <Input
               id="name"
               type="text"
-              placeholder="例：admin / 片山尚久"
+              placeholder="漢字フルネームで空白なしで入力してください"
               autoComplete="username"
               error={Boolean(errors.name)}
               {...register("name")}
@@ -74,17 +74,6 @@ export function LoginForm() {
             {isPending ? "ログイン中..." : "ログイン"}
           </Button>
         </form>
-
-        <div className="mt-6 rounded-btn border border-line bg-bg p-3 text-xs">
-          <p className="font-semibold text-ink">登録済みユーザー</p>
-          <ul className="mt-1 space-y-0.5 text-ink-soft">
-            <li>・<code className="text-mint-dark">admin</code>（管理者）</li>
-            <li>・片山尚久 / 加藤虎太郎 / 古川隼也 / 三宅海大</li>
-          </ul>
-          <p className="mt-2 text-ink-soft">
-            パスワードは全員共通：<code className="text-mint-dark">1111</code>
-          </p>
-        </div>
       </CardContent>
     </Card>
   );
