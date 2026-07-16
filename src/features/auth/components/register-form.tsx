@@ -21,7 +21,7 @@ export function RegisterForm() {
     register, handleSubmit, formState: { errors },
   } = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { email: "", name: "", department: "", password: "" },
+    defaultValues: { name: "", email: "", department: "", password: "" },
   });
 
   const onSubmit = (v: RegisterValues) => {
@@ -45,12 +45,13 @@ export function RegisterForm() {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="name" required>氏名</Label>
+            <Label htmlFor="name" required>ユーザー名</Label>
             <Input id="name" placeholder="山田 太郎" error={Boolean(errors.name)} {...register("name")} />
+            <p className="text-xs text-ink-soft">ログイン時に使う名前です</p>
             {errors.name && <p className="text-xs text-danger">{errors.name.message}</p>}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="email" required>メールアドレス</Label>
+            <Label htmlFor="email">メールアドレス（任意）</Label>
             <Input id="email" type="email" placeholder="you@example.com" autoComplete="email" error={Boolean(errors.email)} {...register("email")} />
             {errors.email && <p className="text-xs text-danger">{errors.email.message}</p>}
           </div>
@@ -61,7 +62,7 @@ export function RegisterForm() {
           <div className="space-y-1.5">
             <Label htmlFor="password" required>パスワード</Label>
             <Input id="password" type="password" autoComplete="new-password" error={Boolean(errors.password)} {...register("password")} />
-            <p className="text-xs text-ink-soft">8文字以上、英字と数字を含めてください</p>
+            <p className="text-xs text-ink-soft">4文字以上</p>
             {errors.password && <p className="text-xs text-danger">{errors.password.message}</p>}
           </div>
 

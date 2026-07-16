@@ -48,9 +48,11 @@ export default async function UsersSettingsPage() {
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold text-ink">{u.name}</p>
                   <p className="mt-0.5 flex flex-wrap items-center gap-3 text-xs text-ink-soft">
-                    <span className="inline-flex items-center gap-1">
-                      <Mail className="h-3.5 w-3.5" />{u.email}
-                    </span>
+                    {u.email && (
+                      <span className="inline-flex items-center gap-1">
+                        <Mail className="h-3.5 w-3.5" />{u.email}
+                      </span>
+                    )}
                     {u.department && (
                       <span className="inline-flex items-center gap-1">
                         <Building2 className="h-3.5 w-3.5" />{u.department}
@@ -67,8 +69,8 @@ export default async function UsersSettingsPage() {
       </Card>
 
       <p className="mt-4 rounded-btn border border-mint-soft bg-mint-softer p-3 text-xs text-mint-dark">
-        ★ 認証は自前実装（JSONファイル + bcryptハッシュ + 署名Cookieセッション）。
-        パスワードは全て一方向暗号化して保存されているため、DBが漏れても復元できません。
+        ★ 認証は自前実装（scryptハッシュ + 署名Cookieセッション）。
+        パスワードは全て一方向暗号化されており、DBが漏れても復元できません。
       </p>
     </>
   );

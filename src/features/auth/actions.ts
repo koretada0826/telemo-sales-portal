@@ -8,30 +8,30 @@ import {
   type LoginValues,
   type RegisterValues,
 } from "@/lib/auth/schema";
-import { findUserByEmail, createUser } from "@/lib/auth/user-store";
+import { findUserByName, createUser } from "@/lib/auth/user-store";
 import { verifyPassword } from "@/lib/auth/hash";
 import { createSession, destroySession } from "@/lib/auth/session";
 
 export type AuthResult = { ok: true } | { ok: false; error: string };
 
-/** ログイン */
+/** ログイン（名前 + パスワード） */
 export async function loginAction(values: LoginValues): Promise<AuthResult> {
   const parsed = loginSchema.safeParse(values);
   if (!parsed.success) return { ok: false, error: "入力に不備があります" };
 
-  const user = await findUserByEmail(parsed.data.email);
-  // ★セキュリティ：ユーザー不在時とパスワード不一致で違うエラーを返さない（メール存在の推測防止）
-  if (!user) return { ok: false, error: "メールアドレスまたはパスワードが違います" };
+  const user = await findUserByName(parsed.data.name);
+  // ★セキュリティ：ユーザー不在/パスワード不一致で同じエラーを返す
+  if (!user) return { ok: false, error: "ユーザー名またはパスワードが違います" };
 
   const ok = await verifyPassword(parsed.data.password, user.passwordHash);
-  if (!ok) return { ok: false, error: "メールアドレスまたはパスワードが違います" };
+  if (!ok) return { ok: false, error: "ユーザー名またはパスワードが違います" };
 
   await createSession(user.id);
   revalidatePath("/", "layout");
   return { ok: true };
 }
 
-/** 新規登録 */
+/** 新規登録（管理者による追加用として維持） */
 export async function registerAction(values: RegisterValues): Promise<AuthResult> {
   const parsed = registerSchema.safeParse(values);
   if (!parsed.success) {
@@ -41,10 +41,10 @@ export async function registerAction(values: RegisterValues): Promise<AuthResult
 
   try {
     const user = await createUser({
-      email: parsed.data.email,
       name: parsed.data.name,
+      email: parsed.data.email || undefined,
       department: parsed.data.department,
-      role: "member", // 新規登録はメンバー権限固定（管理者は既存adminが昇格させる）
+      role: "member",
       password: parsed.data.password,
     });
     await createSession(user.id);

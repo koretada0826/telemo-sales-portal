@@ -1,6 +1,6 @@
 "use client";
 
-// ログインフォーム。Server Actionを呼び、成功したらダッシュボードへ遷移。
+// ログインフォーム（名前 + パスワード）
 
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
@@ -14,7 +14,6 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { loginSchema, type LoginValues } from "@/lib/auth/schema";
 import { loginAction } from "@/features/auth/actions";
-import Link from "next/link";
 
 export function LoginForm() {
   const router = useRouter();
@@ -23,7 +22,7 @@ export function LoginForm() {
     register, handleSubmit, formState: { errors },
   } = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { name: "", password: "" },
   });
 
   const onSubmit = (v: LoginValues) => {
@@ -47,16 +46,16 @@ export function LoginForm() {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="email" required>メールアドレス</Label>
+            <Label htmlFor="name" required>ユーザー名</Label>
             <Input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              autoComplete="email"
-              error={Boolean(errors.email)}
-              {...register("email")}
+              id="name"
+              type="text"
+              placeholder="例：admin / 片山尚久"
+              autoComplete="username"
+              error={Boolean(errors.name)}
+              {...register("name")}
             />
-            {errors.email && <p className="text-xs text-danger">{errors.email.message}</p>}
+            {errors.name && <p className="text-xs text-danger">{errors.name.message}</p>}
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="password" required>パスワード</Label>
@@ -76,24 +75,14 @@ export function LoginForm() {
           </Button>
         </form>
 
-        <p className="mt-4 text-center text-xs text-ink-soft">
-          アカウントをお持ちでない方は{" "}
-          <Link href="/register" className="text-mint-dark underline hover:no-underline">
-            新規登録
-          </Link>
-        </p>
-
-        {/* 開発用：既存デモアカウント情報 */}
         <div className="mt-6 rounded-btn border border-line bg-bg p-3 text-xs">
-          <p className="font-semibold text-ink">デモアカウント</p>
-          <p className="mt-1 text-ink-soft">
-            メール：<code className="text-mint-dark">yamada@example.com</code>（管理者）
-          </p>
-          <p className="text-ink-soft">
-            パスワード：<code className="text-mint-dark">telemo2026</code>
-          </p>
-          <p className="mt-1 text-ink-soft">
-            他：sato / suzuki / tanaka / ito @example.com（パスワード共通）
+          <p className="font-semibold text-ink">登録済みユーザー</p>
+          <ul className="mt-1 space-y-0.5 text-ink-soft">
+            <li>・<code className="text-mint-dark">admin</code>（管理者）</li>
+            <li>・片山尚久 / 加藤虎太郎 / 古川隼也 / 三宅海大</li>
+          </ul>
+          <p className="mt-2 text-ink-soft">
+            パスワードは全員共通：<code className="text-mint-dark">1111</code>
           </p>
         </div>
       </CardContent>

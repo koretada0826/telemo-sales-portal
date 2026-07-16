@@ -51,7 +51,7 @@ export async function getCurrentUser(): Promise<CurrentUser> {
   return {
     id: stored.id,
     name: stored.name,
-    email: stored.email,
+    email: stored.email ?? "",
     role: stored.role,
     department: stored.department,
   };

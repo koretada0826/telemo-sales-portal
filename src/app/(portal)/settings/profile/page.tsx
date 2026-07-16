@@ -42,7 +42,7 @@ export default async function ProfileSettingsPage() {
               <Input id="name" defaultValue={user.name} disabled />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="email" required>メールアドレス</Label>
+              <Label htmlFor="email">メールアドレス（任意）</Label>
               <Input id="email" type="email" defaultValue={user.email} disabled />
             </div>
             <div className="space-y-1.5">

@@ -50,7 +50,13 @@ export function UserMenu({ user }: { user: CurrentUser }) {
           >
             <div className="border-b border-line px-4 py-3">
               <p className="text-sm font-semibold text-ink">{user.name}</p>
-              <p className="mt-0.5 text-xs text-ink-soft">{user.email}</p>
+              {user.email ? (
+                <p className="mt-0.5 text-xs text-ink-soft">{user.email}</p>
+              ) : (
+                <p className="mt-0.5 text-xs text-ink-soft">
+                  {user.department || "権限：" + user.role}
+                </p>
+              )}
             </div>
             <MenuLink href="/settings/profile" icon={<User className="h-4 w-4" />} label="プロフィール" onClose={() => setOpen(false)} />
             <MenuLink href="/settings/system" icon={<Settings className="h-4 w-4" />} label="アカウント設定" onClose={() => setOpen(false)} />
