@@ -1,0 +1,29 @@
+# Node.js
+node_modules/
+
+# Next.js
+.next/
+out/
+build/
+
+# ログ
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 環境変数 ★重要
+.env
+.env.local
+.env.*.local
+
+# エディタ
+.vscode/
+.idea/
+.DS_Store
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# ★ローカルDB代わりのJSON（ユーザーデータ・全コンテンツ含む）
+data/*.json
