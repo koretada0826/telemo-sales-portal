@@ -26,19 +26,23 @@ const DATA_DIR = IS_VERCEL
   ? "/tmp/data"
   : path.resolve(process.cwd(), "data");
 
-type Cache = { maps: Record<string, Map<string, unknown>> };
+type Cache = {
+  maps: Record<string, Map<string, unknown> | undefined>;
+  // 進行中のロード（同時アクセス時のシード書込レース対策）
+  inflight: Record<string, Promise<Map<string, unknown>> | undefined>;
+};
 const g = globalThis as unknown as { __dsCache?: Cache };
 
 function getCache(): Cache {
-  if (!g.__dsCache) g.__dsCache = { maps: {} };
+  if (!g.__dsCache) g.__dsCache = { maps: {}, inflight: {} };
   return g.__dsCache;
 }
 
-/** ファイル書込（アトミック：一時ファイル→rename） */
+/** ファイル書込（アトミック：一時ファイル→rename）。tmp名はPID+乱数で衝突回避。 */
 async function saveFile<T>(filename: string, items: T[]): Promise<void> {
   await fs.mkdir(DATA_DIR, { recursive: true });
   const fullPath = path.join(DATA_DIR, filename);
-  const tmp = fullPath + ".tmp";
+  const tmp = `${fullPath}.${process.pid}.${Math.random().toString(36).slice(2)}.tmp`;
   await fs.writeFile(tmp, JSON.stringify(items, null, 2), "utf-8");
   await fs.rename(tmp, fullPath);
 }
@@ -68,12 +72,22 @@ export async function loadMap<T extends { id: string }>(
 ): Promise<Map<string, T>> {
   const cache = getCache();
   if (cache.maps[filename]) return cache.maps[filename] as Map<string, T>;
+  // 同一ファイルへの並行ロードは同じPromiseを共有（seed書込の競合を防ぐ）
+  if (cache.inflight[filename]) return cache.inflight[filename] as Promise<Map<string, T>>;
 
-  const items = await loadFile<T>(filename, getSeeds);
-  const map = new Map<string, T>();
-  for (const item of items) map.set(item.id, item);
-  cache.maps[filename] = map as Map<string, unknown>;
-  return map;
+  const promise = (async () => {
+    const items = await loadFile<T>(filename, getSeeds);
+    const map = new Map<string, T>();
+    for (const item of items) map.set(item.id, item);
+    cache.maps[filename] = map as Map<string, unknown>;
+    return map;
+  })();
+  cache.inflight[filename] = promise as Promise<Map<string, unknown>>;
+  try {
+    return await promise;
+  } finally {
+    delete cache.inflight[filename];
+  }
 }
 
 /** Map の内容をファイルに保存。キャッシュも更新。 */

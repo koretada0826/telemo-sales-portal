@@ -58,7 +58,7 @@ export default async function DashboardPage() {
       )}
 
       {/* 統計カード（5種）※各カードをクリックで対応する一覧ページへ遷移 */}
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-5">
         <StatCard icon={BookOpen} label="FAQ 総数" value={faqTotal} suffix="件" href="/knowledge/faqs" />
         <StatCard icon={MessageSquareText} label="トークスクリプト" value={scriptTotal} suffix="件" href="/training/scripts" />
         <StatCard icon={Package} label="商品情報" value={productTotal} suffix="件" accent="gray" href="/sales/products" />

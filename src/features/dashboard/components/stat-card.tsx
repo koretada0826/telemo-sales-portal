@@ -36,35 +36,32 @@ export function StatCard({
   const body = (
     <Card
       className={cn(
-        "relative p-5",
-        // href ありの時はホバー効果を追加
+        "relative p-3 sm:p-5",
         href && "cursor-pointer transition-transform duration-200 hover:-translate-y-0.5 hover:border-mint/40 hover:shadow-cardHover",
       )}
     >
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-ink-soft">{label}</p>
+      <div className="flex items-center gap-2 sm:justify-between">
         <div
           className={cn(
-            "flex h-9 w-9 items-center justify-center rounded-full transition-colors",
-            accent === "mint"
-              ? "bg-mint-softer text-mint-dark"
-              : "bg-line/70 text-ink-soft",
+            "flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-colors sm:order-2 sm:h-9 sm:w-9",
+            accent === "mint" ? "bg-mint-softer text-mint-dark" : "bg-line/70 text-ink-soft",
             href && "group-hover:bg-mint group-hover:text-white",
           )}
         >
-          <Icon className="h-4 w-4" />
+          <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         </div>
+        <p className="min-w-0 truncate text-xs text-ink-soft sm:order-1 sm:text-sm">{label}</p>
       </div>
-      <div className="mt-3 flex items-baseline gap-1">
-        <span className="text-2xl font-bold text-ink sm:text-3xl">
+      <div className="mt-1.5 flex items-baseline gap-1 sm:mt-3">
+        <span className="text-lg font-bold text-ink sm:text-3xl">
           {formatNumber(value)}
         </span>
-        {suffix && <span className="text-sm text-ink-soft">{suffix}</span>}
+        {suffix && <span className="text-[11px] text-ink-soft sm:text-sm">{suffix}</span>}
       </div>
       {trend && (
         <p
           className={cn(
-            "mt-2 text-xs",
+            "mt-1 text-[11px] sm:mt-2 sm:text-xs",
             trend.diff >= 0 ? "text-success" : "text-danger",
           )}
         >
@@ -72,9 +69,8 @@ export function StatCard({
         </p>
       )}
 
-      {/* href ありのときだけ右下に「詳細を見る」矢印を表示 */}
       {href && (
-        <span className="absolute bottom-3 right-3 inline-flex items-center gap-0.5 text-[10px] font-medium text-mint-dark opacity-0 transition-opacity group-hover:opacity-100">
+        <span className="absolute bottom-3 right-3 hidden items-center gap-0.5 text-[10px] font-medium text-mint-dark opacity-0 transition-opacity group-hover:opacity-100 sm:inline-flex">
           一覧を見る
           <ArrowUpRight className="h-3 w-3" />
         </span>
