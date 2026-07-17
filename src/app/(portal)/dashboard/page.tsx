@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { LucideIcon } from "lucide-react";
 import {
   BookOpen, MessageSquareText, ArrowRight, Sparkles,
   Package, FileText, LayoutList, Bell, Calendar, HelpCircle,
@@ -7,7 +8,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { StatCard } from "@/features/dashboard/components/stat-card";
+import { formatNumber } from "@/lib/utils/format";
 import { countFaqs, countUnansweredFaqs, listRecentFaqs } from "@/lib/data-source/faqs";
 import { countScripts } from "@/lib/data-source/scripts";
 import { countProducts } from "@/lib/data-source/products";
@@ -57,14 +58,16 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      {/* 統計カード（5種）※各カードをクリックで対応する一覧ページへ遷移 */}
-      <div className="grid grid-cols-2 gap-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-5">
-        <StatCard icon={BookOpen} label="FAQ 総数" value={faqTotal} suffix="件" href="/knowledge/faqs" />
-        <StatCard icon={MessageSquareText} label="トークスクリプト" value={scriptTotal} suffix="件" href="/training/scripts" />
-        <StatCard icon={Package} label="商品情報" value={productTotal} suffix="件" accent="gray" href="/sales/products" />
-        <StatCard icon={FileText} label="提案資料" value={materialTotal} suffix="件" accent="gray" href="/sales/materials" />
-        <StatCard icon={LayoutList} label="提案構成" value={proposalTotal} suffix="件" accent="gray" href="/sales/proposals" />
-      </div>
+      {/* ナレッジ・営業資料の件数サマリー：1枚のカードに5項目を縦リスト表示 */}
+      <Card className="overflow-hidden p-0">
+        <ul className="divide-y divide-line">
+          <SummaryRow icon={BookOpen} label="FAQ 総数" value={faqTotal} href="/knowledge/faqs" />
+          <SummaryRow icon={MessageSquareText} label="トークスクリプト" value={scriptTotal} href="/training/scripts" />
+          <SummaryRow icon={Package} label="商品情報" value={productTotal} href="/sales/products" />
+          <SummaryRow icon={FileText} label="提案資料" value={materialTotal} href="/sales/materials" />
+          <SummaryRow icon={LayoutList} label="提案構成" value={proposalTotal} href="/sales/proposals" />
+        </ul>
+      </Card>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
         {/* 左：最近更新されたFAQ */}
@@ -170,5 +173,31 @@ function ShortcutLink({ href, label }: { href: string; label: string }) {
       <span>{label}</span>
       <ArrowRight className="h-3.5 w-3.5 text-mint" />
     </Link>
+  );
+}
+
+/** サマリーカード内の1行。行全体がリンクで、右端に件数+矢印。 */
+function SummaryRow({
+  icon: Icon, label, value, href,
+}: {
+  icon: LucideIcon; label: string; value: number; href: string;
+}) {
+  return (
+    <li>
+      <Link
+        href={href}
+        className="group flex items-center gap-3 px-4 py-3 transition-colors hover:bg-mint-softer/40 sm:px-5 sm:py-3.5"
+      >
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-mint-softer text-mint-dark transition-colors group-hover:bg-mint group-hover:text-white">
+          <Icon className="h-4 w-4" />
+        </span>
+        <span className="flex-1 truncate text-sm font-medium text-ink sm:text-base">{label}</span>
+        <span className="text-base font-bold text-ink sm:text-lg">
+          {formatNumber(value)}
+          <span className="ml-0.5 text-xs font-normal text-ink-soft">件</span>
+        </span>
+        <ArrowRight className="h-4 w-4 shrink-0 text-ink-soft transition-transform group-hover:translate-x-0.5 group-hover:text-mint" />
+      </Link>
+    </li>
   );
 }
