@@ -27,3 +27,4 @@ next-env.d.ts
 
 # ★ローカルDB代わりのJSON（ユーザーデータ・全コンテンツ含む）
 data/*.json
+.claude/

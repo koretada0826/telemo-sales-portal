@@ -1,44 +1,58 @@
 import "server-only";
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { Redis } from "@upstash/redis";
 
 /**
  * JSON永続化のハブ。
  *
- * 保存先：
- *   - ローカル開発 → `data/` ディレクトリ（プロジェクト直下、gitignore済み）
- *   - Vercel本番 → `/tmp/data/` （インスタンス寿命の間だけ保持）
- *
- * ★Vercel上の制約：
- *   - サーバーレスなので、コールドスタート時にデータリセット
- *   - でもログインは常に動く（起動時にシード = 5人が自動作成される）
- *   - 恒久永続が必要になったらSupabase/Postgres等へ切替
+ * 保存先の自動切替：
+ *   - UPSTASH_REDIS_REST_URL & _TOKEN が設定されている → Upstash Redis（恒久保存）
+ *   - 未設定（ローカル開発）→ プロジェクト直下 `data/` ディレクトリ（gitignore済み）
  *
  * ★セキュリティ：
  *   - ローカルの data/ は .gitignore 済み
+ *   - Redisトークンは環境変数、コードに直書き禁止
  *   - パスワードは scrypt でハッシュ済み
- *   - /tmp はVercelの各インスタンス専用、外部アクセス不可
  */
 
-// Vercel環境判定：VERCEL 環境変数はVercel上で自動的に "1" が設定される
-const IS_VERCEL = Boolean(process.env.VERCEL);
-const DATA_DIR = IS_VERCEL
-  ? "/tmp/data"
-  : path.resolve(process.cwd(), "data");
+const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL;
+const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+const USE_REDIS = Boolean(REDIS_URL && REDIS_TOKEN);
+
+// Redisクライアントは1度だけ初期化（globalThisで hot-reload 越しに使い回す）
+const g = globalThis as unknown as {
+  __dsCache?: Cache;
+  __dsRedis?: Redis;
+};
+
+function getRedis(): Redis {
+  if (!g.__dsRedis) {
+    g.__dsRedis = new Redis({ url: REDIS_URL!, token: REDIS_TOKEN! });
+  }
+  return g.__dsRedis;
+}
+
+// キー命名規則：`telemo:{filename}`（プレフィックスで他アプリと衝突回避）
+const KEY_PREFIX = "telemo:";
+const redisKey = (filename: string) => `${KEY_PREFIX}${filename}`;
+
+// ローカル開発用ディレクトリ
+const DATA_DIR = path.resolve(process.cwd(), "data");
 
 type Cache = {
   maps: Record<string, Map<string, unknown> | undefined>;
   // 進行中のロード（同時アクセス時のシード書込レース対策）
   inflight: Record<string, Promise<Map<string, unknown>> | undefined>;
 };
-const g = globalThis as unknown as { __dsCache?: Cache };
 
 function getCache(): Cache {
   if (!g.__dsCache) g.__dsCache = { maps: {}, inflight: {} };
   return g.__dsCache;
 }
 
-/** ファイル書込（アトミック：一時ファイル→rename）。tmp名はPID+乱数で衝突回避。 */
+// --- ファイル実装（ローカル開発用） ---
+
 async function saveFile<T>(filename: string, items: T[]): Promise<void> {
   await fs.mkdir(DATA_DIR, { recursive: true });
   const fullPath = path.join(DATA_DIR, filename);
@@ -47,7 +61,6 @@ async function saveFile<T>(filename: string, items: T[]): Promise<void> {
   await fs.rename(tmp, fullPath);
 }
 
-/** ファイル読込 or シードから初期化 */
 async function loadFile<T extends { id: string }>(
   filename: string,
   getSeeds: () => T[] | Promise<T[]>,
@@ -65,18 +78,51 @@ async function loadFile<T extends { id: string }>(
   }
 }
 
-/** ファイルから読み込み。Map<id, T> で返す。以降はメモリキャッシュ。 */
+// --- Redis実装（Vercel本番用） ---
+
+async function saveRedis<T>(filename: string, items: T[]): Promise<void> {
+  // @upstash/redis は自動でJSON化するので、そのまま配列を渡してOK
+  await getRedis().set(redisKey(filename), items);
+}
+
+async function loadRedis<T extends { id: string }>(
+  filename: string,
+  getSeeds: () => T[] | Promise<T[]>,
+): Promise<T[]> {
+  const key = redisKey(filename);
+  const stored = await getRedis().get<T[]>(key);
+  if (stored && Array.isArray(stored)) return stored;
+  // 初回：シードを保存
+  const seeds = await getSeeds();
+  await getRedis().set(key, seeds);
+  return seeds;
+}
+
+// --- 公開API：内部で自動切替 ---
+
+async function loadItems<T extends { id: string }>(
+  filename: string,
+  getSeeds: () => T[] | Promise<T[]>,
+): Promise<T[]> {
+  return USE_REDIS ? loadRedis(filename, getSeeds) : loadFile(filename, getSeeds);
+}
+
+async function saveItems<T>(filename: string, items: T[]): Promise<void> {
+  return USE_REDIS ? saveRedis(filename, items) : saveFile(filename, items);
+}
+
+/** データを読み込み、Map<id, T> で返す。以降はメモリキャッシュ。 */
 export async function loadMap<T extends { id: string }>(
   filename: string,
   getSeeds: () => T[] | Promise<T[]>,
 ): Promise<Map<string, T>> {
   const cache = getCache();
   if (cache.maps[filename]) return cache.maps[filename] as Map<string, T>;
-  // 同一ファイルへの並行ロードは同じPromiseを共有（seed書込の競合を防ぐ）
+  // 同一キーへの並行ロードは同じPromiseを共有（seed書込の競合を防ぐ）
   if (cache.inflight[filename]) return cache.inflight[filename] as Promise<Map<string, T>>;
 
   const promise = (async () => {
-    const items = await loadFile<T>(filename, getSeeds);
+    const items = await loadItems<T>(filename, getSeeds);
     const map = new Map<string, T>();
     for (const item of items) map.set(item.id, item);
     cache.maps[filename] = map as Map<string, unknown>;
@@ -90,12 +136,12 @@ export async function loadMap<T extends { id: string }>(
   }
 }
 
-/** Map の内容をファイルに保存。キャッシュも更新。 */
+/** Map の内容を永続化。キャッシュも更新。 */
 export async function saveMap<T extends { id: string }>(
   filename: string,
   map: Map<string, T>,
 ): Promise<void> {
   const items = Array.from(map.values());
-  await saveFile(filename, items);
+  await saveItems(filename, items);
   getCache().maps[filename] = map as Map<string, unknown>;
 }
