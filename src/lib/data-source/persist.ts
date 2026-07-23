@@ -81,8 +81,13 @@ async function loadFile<T extends { id: string }>(
 // --- Redis実装（Vercel本番用） ---
 
 async function saveRedis<T>(filename: string, items: T[]): Promise<void> {
-  // @upstash/redis は自動でJSON化するので、そのまま配列を渡してOK
-  await getRedis().set(redisKey(filename), items);
+  // 明示的にJSON文字列化して保存。@upstash/redisは自動パースするので get で復元される。
+  try {
+    await getRedis().set(redisKey(filename), JSON.stringify(items));
+  } catch (e) {
+    console.error(`[persist] Redis SET failed for ${filename}:`, e);
+    throw new Error(`Redis保存失敗 (${filename}): ${(e as Error).message}`);
+  }
 }
 
 async function loadRedis<T extends { id: string }>(
@@ -90,11 +95,27 @@ async function loadRedis<T extends { id: string }>(
   getSeeds: () => T[] | Promise<T[]>,
 ): Promise<T[]> {
   const key = redisKey(filename);
-  const stored = await getRedis().get<T[]>(key);
-  if (stored && Array.isArray(stored)) return stored;
+  let stored: unknown;
+  try {
+    stored = await getRedis().get(key);
+  } catch (e) {
+    console.error(`[persist] Redis GET failed for ${filename}:`, e);
+    throw new Error(`Redis読込失敗 (${filename}): ${(e as Error).message}`);
+  }
+  // 既存データがあれば返す（Upstashは自動JSONパースするので配列で返る）
+  if (Array.isArray(stored)) return stored as T[];
+  // 文字列で返るケース（明示set-strした場合）にも対応
+  if (typeof stored === "string") {
+    try {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) return parsed as T[];
+    } catch {
+      /* fall through to seed */
+    }
+  }
   // 初回：シードを保存
   const seeds = await getSeeds();
-  await getRedis().set(key, seeds);
+  await saveRedis(filename, seeds);
   return seeds;
 }
 
